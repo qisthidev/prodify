@@ -142,7 +142,7 @@ services:
       - ./storage/metabase_data:/metabase-data
 
   sonar:
-    image: sonarqube:lts-community
+    image: sonarqube:25.4.0.105899-community
     depends_on:
       pgsql:
         condition: service_healthy
@@ -192,6 +192,17 @@ services:
       - '${KEYCLOAK_PORT:-8083}:8080'
     depends_on:
       - pgsql17
+
+  proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./storage/proxy_data:/data
+      - ./storage/proxy_letsencrypt:/etc/letsencrypt
 
 volumes:
   camunda:
