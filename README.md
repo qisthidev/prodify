@@ -14,7 +14,7 @@ Prodify adalah infrastruktur produksi lokal yang disiapkan menggunakan Docker Co
 ### Clone Repository
 
 ```sh
-git clone <repository-url>
+git clone https://github.com/ramaid/prodify.git
 cd prodify
 ```
 

@@ -70,7 +70,7 @@ services:
       - ./storage/minio_data:/data
 
   camunda:
-    image: camunda/camunda-bpm-platform:7.21.0
+    image: camunda/camunda-bpm-platform:7.23.0
     ports:
       - '${CAMUNDA_PORT:-8080}:8080'
     depends_on:
@@ -85,8 +85,8 @@ services:
       DB_USERNAME: '${DB_USER:-user}'
       DB_PASSWORD: '${DB_PASSWORD:-secret}'
     volumes:
-      - camunda:/camunda
-      - ./storage/camunda_data:/camunda/webapps/camunda-invoice
+      - ./storage/camunda_data:/camunda
+      - ./storage/camunda_invoice:/camunda/webapps/camunda-invoice
 
   matomo:
     image: matomo:latest
@@ -153,7 +153,7 @@ services:
     ports:
       - '${SONAR_PORT:-9001}:9000'
     volumes:
-      - sonar:/opt/sonarqube
+      - ./storage/sonar_data:/opt/sonarqube
 
   jasper:
     image: bitnami/jasperreports:7-debian-10
@@ -203,9 +203,3 @@ services:
     volumes:
       - ./storage/proxy_data:/data
       - ./storage/proxy_letsencrypt:/etc/letsencrypt
-
-volumes:
-  camunda:
-    driver: local
-  sonar:
-    driver: local
