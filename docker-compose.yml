@@ -117,15 +117,6 @@ services:
     volumes:
       - ./storage/redis_data:/data
 
-  # GlitchTip's dedicated Redis service
-  glitchtip-redis:
-    image: valkey/valkey
-    restart: unless-stopped
-    volumes:
-      - ./storage/glitchtip_redis_data:/data
-    ports:
-      - "${GLITCHTIP_REDIS_PORT:-6380}:6379"
-
   mailpit:
     image: axllent/mailpit:latest
     ports:
@@ -217,6 +208,15 @@ services:
     volumes:
       - ./storage/proxy_data:/data
       - ./storage/proxy_letsencrypt:/etc/letsencrypt
+
+  # GlitchTip's dedicated Redis service
+  glitchtip-redis:
+    image: valkey/valkey
+    restart: unless-stopped
+    volumes:
+      - ./storage/glitchtip_redis_data:/data
+    ports:
+      - "${GLITCHTIP_REDIS_PORT:-6380}:6379"
 
   # GlitchTip services
   glitchtip-web:
