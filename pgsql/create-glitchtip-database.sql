@@ -1,2 +1,2 @@
-CREATE DATABASE glitchtip;
-GRANT ALL PRIVILEGES ON DATABASE glitchtip TO "user";
+SELECT 'CREATE DATABASE glitchtip'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'glitchtip')\gexec

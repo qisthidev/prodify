@@ -13,6 +13,7 @@ services:
       - ./pgsql/create-laravel-database.sql:/docker-entrypoint-initdb.d/10-create-laravel-database.sql
       - ./pgsql/create-metabase-database.sql:/docker-entrypoint-initdb.d/20-create-metabase-database.sql
       - ./pgsql/create-sonar-database.sql:/docker-entrypoint-initdb.d/30-create-metabase-database.sql
+      - ./pgsql/create-glitchtip-database.sql:/docker-entrypoint-initdb.d/40-create-glitchtip-database.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user}"]
       interval: 6s
@@ -30,6 +31,9 @@ services:
       - '5433:5432'
     volumes:
       - ./storage/postgres_data17:/var/lib/postgresql/data
+      - ./pgsql/create-laravel-database.sql:/docker-entrypoint-initdb.d/10-create-laravel-database.sql
+      - ./pgsql/create-metabase-database.sql:/docker-entrypoint-initdb.d/20-create-metabase-database.sql
+      - ./pgsql/create-sonar-database.sql:/docker-entrypoint-initdb.d/30-create-metabase-database.sql
       - ./pgsql/create-glitchtip-database.sql:/docker-entrypoint-initdb.d/40-create-glitchtip-database.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user}"]
