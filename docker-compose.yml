@@ -30,6 +30,7 @@ services:
       - '5433:5432'
     volumes:
       - ./storage/postgres_data17:/var/lib/postgresql/data
+      - ./pgsql/create-glitchtip-database.sql:/docker-entrypoint-initdb.d/40-create-glitchtip-database.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user}"]
       interval: 6s
@@ -111,6 +112,15 @@ services:
       - "6379:6379"
     volumes:
       - ./storage/redis_data:/data
+
+  # GlitchTip's dedicated Redis service
+  glitchtip-redis:
+    image: valkey/valkey
+    restart: unless-stopped
+    volumes:
+      - ./storage/glitchtip_redis_data:/data
+    ports:
+      - "${GLITCHTIP_REDIS_PORT:-6380}:6379"
 
   mailpit:
     image: axllent/mailpit:latest
@@ -204,5 +214,62 @@ services:
       - ./storage/proxy_data:/data
       - ./storage/proxy_letsencrypt:/etc/letsencrypt
 
+  # GlitchTip services
+  glitchtip-web:
+    image: glitchtip/glitchtip
+    depends_on:
+      - pgsql17
+      - glitchtip-redis
+    ports:
+      - "${GLITCHTIP_PORT:-8084}:8000"
+    environment:
+      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql17:5432/${GLITCHTIP_DB:-glitchtip}
+      SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-change_me_to_something_random}
+      PORT: 8000
+      EMAIL_URL: ${GLITCHTIP_EMAIL_URL:-consolemail://}
+      GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN:-https://glitchtip.example.com}
+      DEFAULT_FROM_EMAIL: ${GLITCHTIP_FROM_EMAIL:-email@example.com}
+      CELERY_WORKER_AUTOSCALE: "1,3"
+      REDIS_URL: redis://glitchtip-redis:6379/0
+    restart: unless-stopped
+    volumes:
+      - ./storage/glitchtip_uploads:/code/uploads
+
+  glitchtip-worker:
+    image: glitchtip/glitchtip
+    command: ./bin/run-celery-with-beat.sh
+    depends_on:
+      - pgsql17
+      - glitchtip-redis
+    environment:
+      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql17:5432/${GLITCHTIP_DB:-glitchtip}
+      SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-change_me_to_something_random}
+      PORT: 8000
+      EMAIL_URL: ${GLITCHTIP_EMAIL_URL:-consolemail://}
+      GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN:-https://glitchtip.example.com}
+      DEFAULT_FROM_EMAIL: ${GLITCHTIP_FROM_EMAIL:-email@example.com}
+      CELERY_WORKER_AUTOSCALE: "1,3"
+      REDIS_URL: redis://glitchtip-redis:6379/0
+    restart: unless-stopped
+    volumes:
+      - ./storage/glitchtip_uploads:/code/uploads
+
+  glitchtip-migrate:
+    image: glitchtip/glitchtip
+    depends_on:
+      - pgsql17
+      - glitchtip-redis
+    command: ./bin/run-migrate.sh
+    environment:
+      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql17:5432/${GLITCHTIP_DB:-glitchtip}
+      SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-change_me_to_something_random}
+      PORT: 8000
+      EMAIL_URL: ${GLITCHTIP_EMAIL_URL:-consolemail://}
+      GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN:-https://glitchtip.example.com}
+      DEFAULT_FROM_EMAIL: ${GLITCHTIP_FROM_EMAIL:-email@example.com}
+      CELERY_WORKER_AUTOSCALE: "1,3"
+      REDIS_URL: redis://glitchtip-redis:6379/0
+
 volumes:
   sonar:
+  glitchtip_uploads:

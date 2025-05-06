@@ -1,0 +1,2 @@
+CREATE DATABASE glitchtip;
+GRANT ALL PRIVILEGES ON DATABASE glitchtip TO "user";
