@@ -136,8 +136,6 @@ services:
       SONAR_JDBC_PASSWORD: '${DB_PASSWORD:-secret}'
     ports:
       - '${SONAR_PORT:-9001}:9000'
-    volumes:
-      - sonar:/opt/sonarqube
 
   jasper:
     image: bitnami/jasperreports:7-debian-10
