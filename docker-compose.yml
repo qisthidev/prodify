@@ -53,21 +53,27 @@ services:
     volumes:
       - ./storage/minio_data:/data
 
-  garage:
-    image: dxflrs/garage:v1.0.1
+  rustfs:
+    image: rustfs/rustfs:latest
     environment:
-      # WARNING: Change these defaults in production! Use strong random values.
-      GARAGE_RPC_SECRET: '${GARAGE_RPC_SECRET:-dev-rpc-secret-change-in-production-b0e3c6c4e8f7a2d1b9c8e6f4a7d3b1c9}'
-      GARAGE_ADMIN_TOKEN: '${GARAGE_ADMIN_TOKEN:-dev-admin-token-change-in-production}'
-      GARAGE_METRICS_TOKEN: '${GARAGE_METRICS_TOKEN:-dev-metrics-token-change-in-production}'
+      RUSTFS_ADDRESS: '${RUSTFS_ADDRESS:-:9002}'
+      RUSTFS_ACCESS_KEY: '${RUSTFS_ACCESS_KEY:-rustfsadmin}'
+      RUSTFS_SECRET_KEY: '${RUSTFS_SECRET_KEY:-rustfsadmin}'
+      RUSTFS_CONSOLE_ENABLE: '${RUSTFS_CONSOLE_ENABLE:-true}'
+      RUSTFS_SERVER_DOMAINS: '${RUSTFS_SERVER_DOMAINS:-localhost}'
     ports:
-      - '${GARAGE_S3_API_PORT:-3900}:3900'
-      - '${GARAGE_S3_WEB_PORT:-3902}:3902'
-      - '${GARAGE_ADMIN_PORT:-3903}:3903'
-    command: '/garage server'
+      - '${RUSTFS_PORT:-9002}:9002'
+      - '${RUSTFS_CONSOLE_PORT:-9003}:9003'
     volumes:
-      - ./storage/garage_data:/data
-      - ./storage/garage_meta:/meta
+      - ./storage/rustfs_data:/data
+    command: >
+      --address :9002
+      --console-address :9003
+      --console-enable
+      --access-key ${RUSTFS_ACCESS_KEY:-rustfsadmin}
+      --secret-key ${RUSTFS_SECRET_KEY:-rustfsadmin}
+      --server-domains ${RUSTFS_SERVER_DOMAINS:-localhost}
+      /data
 
   camunda:
     image: camunda/camunda-bpm-platform:7.23.0

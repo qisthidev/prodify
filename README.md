@@ -99,25 +99,21 @@ Buka halaman Camunda (default: [`localhost:8080`](http://localhost:8080/camunda/
 - **Perintah**: `minio server /data/minio --console-address ":8900"`
 - **Volume**: `./storage/minio_data:/data`
 
-### Garage (RustFS - Alternatif MinIO)
+### RustFS (Alternatif MinIO)
 
-- **Image**: dxflrs/garage:v1.0.1
+- **Image**: rustfs/rustfs:latest
 - **Port**: 
-  - 3900 (S3 API, dapat dikonfigurasi)
-  - 3902 (S3 Web, dapat dikonfigurasi)
-  - 3903 (Admin API, dapat dikonfigurasi)
-- **Perintah**: `/garage server`
-- **Volume**: 
-  - `./storage/garage_data:/data`
-  - `./storage/garage_meta:/meta`
+  - 9002 (S3 API, dapat dikonfigurasi)
+  - 9003 (Console, dapat dikonfigurasi)
+- **Volume**: `./storage/rustfs_data:/data`
 - **Lingkungan**:
-  - `GARAGE_RPC_SECRET`: Token rahasia untuk komunikasi RPC
-  - `GARAGE_ADMIN_TOKEN`: Token untuk akses admin API
-  - `GARAGE_METRICS_TOKEN`: Token untuk akses metrics
+  - `RUSTFS_ADDRESS`: Alamat listening server (default: :9002)
+  - `RUSTFS_ACCESS_KEY`: Access key untuk autentikasi (default: rustfsadmin)
+  - `RUSTFS_SECRET_KEY`: Secret key untuk autentikasi (default: rustfsadmin)
+  - `RUSTFS_CONSOLE_ENABLE`: Aktifkan console web (default: true)
+  - `RUSTFS_SERVER_DOMAINS`: Domain server (default: localhost)
 
-Garage adalah sistem penyimpanan objek terdistribusi yang kompatibel dengan S3, ditulis dalam Rust. Ini merupakan alternatif yang ringan dan efisien untuk MinIO.
-
-> **⚠️ Catatan Keamanan**: Default token yang disediakan hanya untuk development. Untuk production, **pastikan mengganti semua token** dengan nilai random yang kuat di file `.env`.
+RustFS adalah sistem penyimpanan objek terdistribusi yang 100% kompatibel dengan S3, ditulis dalam Rust. Ini merupakan alternatif berkinerja tinggi untuk MinIO dengan dukungan penuh S3 API.
 
 ### Camunda
 
@@ -178,9 +174,8 @@ docker-compose down
 - **PostgreSQL**: `localhost:5432`
 - **MongoDB**: `localhost:27017`
 - **Minio Console**: `localhost:8900`
-- **Garage S3 API**: `localhost:3900`
-- **Garage S3 Web**: `localhost:3902`
-- **Garage Admin API**: `localhost:3903`
+- **RustFS S3 API**: `localhost:9002`
+- **RustFS Console**: `localhost:9003`
 - **Camunda**: `localhost:8080`
 - **Matomo**: `localhost:8081`
 - **Redis**: `localhost:6379`

@@ -6,5 +6,4 @@
 /storage/redis_data
 /storage/mariadb_data
 /storage/jasper_data
-/storage/garage_data
-/storage/garage_meta
+/storage/rustfs_data
