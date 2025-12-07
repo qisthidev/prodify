@@ -1,26 +1,5 @@
 services:
   pgsql:
-    image: postgres:16.4
-    environment:
-      PGPASSWORD: '${PGPASSWORD:-secreted}'
-      POSTGRES_USER: '${DB_USER:-user}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_NAME:-camunda}'
-    ports:
-      - '${DB_PORT:-5432}:5432'
-    volumes:
-      - ./storage/postgres_data:/var/lib/postgresql/data
-      - ./pgsql/create-laravel-database.sql:/docker-entrypoint-initdb.d/10-create-laravel-database.sql
-      - ./pgsql/create-metabase-database.sql:/docker-entrypoint-initdb.d/20-create-metabase-database.sql
-      - ./pgsql/create-sonar-database.sql:/docker-entrypoint-initdb.d/30-create-metabase-database.sql
-      - ./pgsql/create-glitchtip-database.sql:/docker-entrypoint-initdb.d/40-create-glitchtip-database.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user}"]
-      interval: 6s
-      timeout: 3s
-      retries: 5
-
-  pgsql17:
     image: postgres:17.0
     environment:
       PGPASSWORD: '${PGPASSWORD:-secreted}'
@@ -63,7 +42,7 @@ services:
       - ./storage/mongo_data:/data/db
 
   minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
     environment:
       MINIO_ROOT_USER: '${MINIO_USER:-minioadmin}'
       MINIO_ROOT_PASSWORD: '${MINIO_PASSWORD:-minioadmin}'
