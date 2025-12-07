@@ -99,6 +99,25 @@ Buka halaman Camunda (default: [`localhost:8080`](http://localhost:8080/camunda/
 - **Perintah**: `minio server /data/minio --console-address ":8900"`
 - **Volume**: `./storage/minio_data:/data`
 
+### RustFS (Alternatif MinIO)
+
+- **Image**: rustfs/rustfs:latest
+- **Port**: 
+  - 9002 (S3 API, dapat dikonfigurasi)
+  - 9003 (Console, dapat dikonfigurasi)
+- **Volume**: `./storage/rustfs_data:/data`
+- **Lingkungan**:
+  - `RUSTFS_ADDRESS`: Alamat listening server (default: :9002)
+  - `RUSTFS_CONSOLE_ADDRESS`: Alamat console server (default: :9003)
+  - `RUSTFS_ACCESS_KEY`: Access key untuk autentikasi (default: rustfsadmin)
+  - `RUSTFS_SECRET_KEY`: Secret key untuk autentikasi (default: rustfsadmin)
+  - `RUSTFS_CONSOLE_ENABLE`: Aktifkan console web (default: true)
+  - `RUSTFS_SERVER_DOMAINS`: Domain server (default: localhost)
+
+RustFS adalah sistem penyimpanan objek terdistribusi yang 100% kompatibel dengan S3, ditulis dalam Rust. Ini merupakan alternatif berkinerja tinggi untuk MinIO dengan dukungan penuh S3 API.
+
+> **⚠️ Catatan Keamanan**: Kredensial default hanya untuk development. Untuk production, **pastikan mengganti access key dan secret key** dengan nilai yang kuat dan unik di file `.env`.
+
 ### Camunda
 
 - **Image**: camunda/camunda-bpm-platform:7.21.0
@@ -158,6 +177,8 @@ docker-compose down
 - **PostgreSQL**: `localhost:5432`
 - **MongoDB**: `localhost:27017`
 - **Minio Console**: `localhost:8900`
+- **RustFS S3 API**: `localhost:9002`
+- **RustFS Console**: `localhost:9003`
 - **Camunda**: `localhost:8080`
 - **Matomo**: `localhost:8081`
 - **Redis**: `localhost:6379`

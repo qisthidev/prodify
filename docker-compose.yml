@@ -53,6 +53,22 @@ services:
     volumes:
       - ./storage/minio_data:/data
 
+  rustfs:
+    image: rustfs/rustfs:latest
+    environment:
+      RUSTFS_ADDRESS: '${RUSTFS_ADDRESS:-:9002}'
+      RUSTFS_ACCESS_KEY: '${RUSTFS_ACCESS_KEY:-rustfsadmin}'
+      RUSTFS_SECRET_KEY: '${RUSTFS_SECRET_KEY:-rustfsadmin}'
+      RUSTFS_CONSOLE_ENABLE: '${RUSTFS_CONSOLE_ENABLE:-true}'
+      RUSTFS_CONSOLE_ADDRESS: '${RUSTFS_CONSOLE_ADDRESS:-:9003}'
+      RUSTFS_SERVER_DOMAINS: '${RUSTFS_SERVER_DOMAINS:-localhost}'
+    ports:
+      - '${RUSTFS_PORT:-9002}:9002'
+      - '${RUSTFS_CONSOLE_PORT:-9003}:9003'
+    volumes:
+      - ./storage/rustfs_data:/data
+    command: /data
+
   camunda:
     image: camunda/camunda-bpm-platform:7.23.0
     ports:
