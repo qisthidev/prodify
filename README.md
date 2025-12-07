@@ -117,6 +117,8 @@ Buka halaman Camunda (default: [`localhost:8080`](http://localhost:8080/camunda/
 
 Garage adalah sistem penyimpanan objek terdistribusi yang kompatibel dengan S3, ditulis dalam Rust. Ini merupakan alternatif yang ringan dan efisien untuk MinIO.
 
+> **⚠️ Catatan Keamanan**: Default token yang disediakan hanya untuk development. Untuk production, **pastikan mengganti semua token** dengan nilai random yang kuat di file `.env`.
+
 ### Camunda
 
 - **Image**: camunda/camunda-bpm-platform:7.21.0
