@@ -5,17 +5,17 @@ services:
       PGPASSWORD: '${PGPASSWORD:-secreted}'
       POSTGRES_USER: '${DB_USER:-user}'
       POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_NAME:-camunda}'
+      POSTGRES_DB: '${DB_NAME:-proxy}'
     ports:
-      - '5433:5432'
+      - '5432:5432'
     volumes:
-      - ./storage/postgres_data17:/var/lib/postgresql/data
+      - ./storage/postgres_data:/var/lib/postgresql/data
       - ./pgsql/create-laravel-database.sql:/docker-entrypoint-initdb.d/10-create-laravel-database.sql
       - ./pgsql/create-metabase-database.sql:/docker-entrypoint-initdb.d/20-create-metabase-database.sql
       - ./pgsql/create-sonar-database.sql:/docker-entrypoint-initdb.d/30-create-metabase-database.sql
       - ./pgsql/create-glitchtip-database.sql:/docker-entrypoint-initdb.d/40-create-glitchtip-database.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user} -d camunda"]
       interval: 6s
       timeout: 3s
       retries: 5
@@ -126,7 +126,7 @@ services:
       - ./storage/metabase_data:/metabase-data
 
   sonar:
-    image: sonarqube:25.4.0.105899-community
+    image: sonarqube:25.11.0.114957-community
     depends_on:
       pgsql:
         condition: service_healthy
@@ -180,10 +180,20 @@ services:
   proxy:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
+    environment:
+      DB_POSTGRES_HOST: '${DB_HOST:-pgsql}'
+      DB_POSTGRES_PORT: '${DB_PORT:-5432}'
+      DB_POSTGRES_USER: '${DB_USER:-user}'
+      DB_POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+      DB_POSTGRES_NAME: '${DB_NAME:-proxy}'
+      INITIAL_ADMIN_EMAIL: '${PROXY_USER:-root@proxy.test}'
+      INITIAL_ADMIN_PASSWORD: '${PROXY_PASSWORD:-p@ssW0rd}'
     ports:
       - '80:80'
       - '81:81'
       - '443:443'
+    depends_on:
+      - pgsql
     volumes:
       - ./storage/proxy_data:/data
       - ./storage/proxy_letsencrypt:/etc/letsencrypt
@@ -254,5 +264,4 @@ services:
       REDIS_URL: redis://glitchtip-redis:6379/0
 
 volumes:
-  sonar:
   glitchtip_uploads:
