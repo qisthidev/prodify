@@ -169,13 +169,13 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-secret}
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://pgsql17/${POSTGRES_DB:-sso}
+      KC_DB_URL: jdbc:postgresql://pgsql/${POSTGRES_DB:-sso}
       KC_DB_USERNAME: '${DB_USER:-user}'
       KC_DB_PASSWORD: '${DB_PASSWORD:-secret}'
     ports:
       - '${KEYCLOAK_PORT:-8083}:8080'
     depends_on:
-      - pgsql17
+      - pgsql
 
   proxy:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -211,12 +211,12 @@ services:
   glitchtip-web:
     image: glitchtip/glitchtip
     depends_on:
-      - pgsql17
+      - pgsql
       - glitchtip-redis
     ports:
       - "${GLITCHTIP_PORT:-8084}:8000"
     environment:
-      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql17:5432/${GLITCHTIP_DB:-glitchtip}
+      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql:5432/${GLITCHTIP_DB:-glitchtip}
       SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-change_me_to_something_random}
       PORT: 8000
       EMAIL_URL: ${GLITCHTIP_EMAIL_URL:-consolemail://}
@@ -232,10 +232,10 @@ services:
     image: glitchtip/glitchtip
     command: ./bin/run-celery-with-beat.sh
     depends_on:
-      - pgsql17
+      - pgsql
       - glitchtip-redis
     environment:
-      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql17:5432/${GLITCHTIP_DB:-glitchtip}
+      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql:5432/${GLITCHTIP_DB:-glitchtip}
       SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-change_me_to_something_random}
       PORT: 8000
       EMAIL_URL: ${GLITCHTIP_EMAIL_URL:-consolemail://}
@@ -250,11 +250,11 @@ services:
   glitchtip-migrate:
     image: glitchtip/glitchtip
     depends_on:
-      - pgsql17
+      - pgsql
       - glitchtip-redis
     command: ./bin/run-migrate.sh
     environment:
-      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql17:5432/${GLITCHTIP_DB:-glitchtip}
+      DATABASE_URL: postgres://${DB_USER:-user}:${DB_PASSWORD:-secret}@pgsql:5432/${GLITCHTIP_DB:-glitchtip}
       SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-change_me_to_something_random}
       PORT: 8000
       EMAIL_URL: ${GLITCHTIP_EMAIL_URL:-consolemail://}
