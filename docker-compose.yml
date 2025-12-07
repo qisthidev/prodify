@@ -53,6 +53,21 @@ services:
     volumes:
       - ./storage/minio_data:/data
 
+  garage:
+    image: dxflrs/garage:v1.0.1
+    environment:
+      GARAGE_RPC_SECRET: '${GARAGE_RPC_SECRET:-b0e3c6c4e8f7a2d1b9c8e6f4a7d3b1c9e5f2a8d4b6c0e9f7a3d1b8c6e4f2a0d8}'
+      GARAGE_ADMIN_TOKEN: '${GARAGE_ADMIN_TOKEN:-garageadmintoken}'
+      GARAGE_METRICS_TOKEN: '${GARAGE_METRICS_TOKEN:-garagemetricstoken}'
+    ports:
+      - '${GARAGE_S3_API_PORT:-3900}:3900'
+      - '${GARAGE_S3_WEB_PORT:-3902}:3902'
+      - '${GARAGE_ADMIN_PORT:-3903}:3903'
+    command: '/garage server'
+    volumes:
+      - ./storage/garage_data:/data
+      - ./storage/garage_meta:/meta
+
   camunda:
     image: camunda/camunda-bpm-platform:7.23.0
     ports:

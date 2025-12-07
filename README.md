@@ -99,6 +99,24 @@ Buka halaman Camunda (default: [`localhost:8080`](http://localhost:8080/camunda/
 - **Perintah**: `minio server /data/minio --console-address ":8900"`
 - **Volume**: `./storage/minio_data:/data`
 
+### Garage (RustFS - Alternatif MinIO)
+
+- **Image**: dxflrs/garage:v1.0.1
+- **Port**: 
+  - 3900 (S3 API, dapat dikonfigurasi)
+  - 3902 (S3 Web, dapat dikonfigurasi)
+  - 3903 (Admin API, dapat dikonfigurasi)
+- **Perintah**: `/garage server`
+- **Volume**: 
+  - `./storage/garage_data:/data`
+  - `./storage/garage_meta:/meta`
+- **Lingkungan**:
+  - `GARAGE_RPC_SECRET`: Token rahasia untuk komunikasi RPC
+  - `GARAGE_ADMIN_TOKEN`: Token untuk akses admin API
+  - `GARAGE_METRICS_TOKEN`: Token untuk akses metrics
+
+Garage adalah sistem penyimpanan objek terdistribusi yang kompatibel dengan S3, ditulis dalam Rust. Ini merupakan alternatif yang ringan dan efisien untuk MinIO.
+
 ### Camunda
 
 - **Image**: camunda/camunda-bpm-platform:7.21.0
@@ -158,6 +176,9 @@ docker-compose down
 - **PostgreSQL**: `localhost:5432`
 - **MongoDB**: `localhost:27017`
 - **Minio Console**: `localhost:8900`
+- **Garage S3 API**: `localhost:3900`
+- **Garage S3 Web**: `localhost:3902`
+- **Garage Admin API**: `localhost:3903`
 - **Camunda**: `localhost:8080`
 - **Matomo**: `localhost:8081`
 - **Redis**: `localhost:6379`
