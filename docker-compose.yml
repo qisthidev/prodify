@@ -15,7 +15,7 @@ services:
       - ./pgsql/create-sonar-database.sql:/docker-entrypoint-initdb.d/30-create-metabase-database.sql
       - ./pgsql/create-glitchtip-database.sql:/docker-entrypoint-initdb.d/40-create-glitchtip-database.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user} -d camunda"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user} -d proxy"]
       interval: 6s
       timeout: 3s
       retries: 5
